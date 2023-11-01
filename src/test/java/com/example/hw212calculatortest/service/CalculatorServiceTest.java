@@ -4,6 +4,12 @@ import com.example.hw212calculatortest.exceptions.DivideByZeroException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,12 +21,17 @@ class CalculatorServiceTest {
         calculatorService = new CalculatorService();
     }
 
-    @Test
-    void sum() {
-        int sum1 = calculatorService.sum(5, 7);
-        assertEquals(5 + 7, sum1);
-        int sum2 = calculatorService.sum(123, 7);
-        assertEquals(123 + 7, sum2);
+    public static Stream<Arguments> argsForSum() {
+        return Stream.of(Arguments.of(5, 2, 7),
+                Arguments.of(10, 4, 14),
+                Arguments.of(7, 3, 10));
+    }
+
+    @ParameterizedTest
+    @MethodSource("argsForSum")
+    void sum(int num1, int num2, int expectedResult) {
+        int sum = calculatorService.sum(num1, num2);
+        assertEquals(expectedResult, sum);
     }
 
     @Test
@@ -47,5 +58,4 @@ class CalculatorServiceTest {
         assertEquals(123 / 7, divide2);
         Assertions.assertThrows(DivideByZeroException.class, () -> calculatorService.divide(7, 0));
     }
-
 }
