@@ -6,7 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 
 import java.util.stream.Stream;
@@ -21,7 +23,7 @@ class CalculatorServiceTest {
         calculatorService = new CalculatorService();
     }
 
-    public static Stream<Arguments> argsForSum() {
+    static Stream<Arguments> argsForSum() {
         return Stream.of(Arguments.of(5, 2, 7),
                 Arguments.of(10, 4, 14),
                 Arguments.of(7, 3, 10));
@@ -34,28 +36,36 @@ class CalculatorServiceTest {
         assertEquals(expectedResult, sum);
     }
 
-    @Test
-    void subtraction() {
-        int sub1 = calculatorService.subtraction(5, 7);
-        assertEquals(5 - 7, sub1);
-        int sub2 = calculatorService.subtraction(123, 7);
-        assertEquals(123 - 7, sub2);
+    @ParameterizedTest
+    @CsvSource({"5,2,3", "10,10,0", "1234, 234, 1000"})
+    void subtraction(int num1, int num2, int expectedResult) {
+        int sub = calculatorService.subtraction(num1, num2);
+        assertEquals(expectedResult, sub);
+    }
+
+    static Stream<Arguments> argsForMultiply() {
+        return Stream.of(Arguments.of(3, 3, 9),
+                Arguments.of(4, 5, 20),
+                Arguments.of(10, 10, 100));
+    }
+
+    @ParameterizedTest
+    @MethodSource("argsForMultiply")
+    void multiply(int num1, int num2, int expectedResult) {
+        int multiply = calculatorService.multiply(num1, num2);
+        assertEquals(expectedResult, multiply);
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({"100,10,10", "1000, 100, 10", "9,3,3"})
+    void divide(int num1, int num2, int expectedResult) {
+        int divide = calculatorService.divide(num1, num2);
+        assertEquals(expectedResult, divide);
     }
 
     @Test
-    void multiply() {
-        int multiply1 = calculatorService.multiply(5, 7);
-        assertEquals(5 * 7, multiply1);
-        int multiply2 = calculatorService.multiply(123, 7);
-        assertEquals(123 * 7, multiply2);
-    }
-
-    @Test
-    void divide() {
-        int divide1 = calculatorService.divide(5, 7);
-        assertEquals(5 / 7, divide1);
-        int divide2 = calculatorService.divide(123, 7);
-        assertEquals(123 / 7, divide2);
+    void willThrowDivideByZeroException() {
         Assertions.assertThrows(DivideByZeroException.class, () -> calculatorService.divide(7, 0));
     }
 }
