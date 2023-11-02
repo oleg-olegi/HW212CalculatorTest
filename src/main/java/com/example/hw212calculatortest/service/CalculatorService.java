@@ -25,7 +25,7 @@ public class CalculatorService implements ServiceInterface {
         if (num2 == 0) {
             throw new DivideByZeroException("Делить на ноль нельзя, дружок");
         }
-            return num1 / num2;
-        }
+        return num1 / num2;
     }
+}
 
